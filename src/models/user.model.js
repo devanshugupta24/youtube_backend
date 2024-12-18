@@ -28,7 +28,7 @@ const userSchema = new Schema(
             required: true,
         },
         coverImage:{
-            type:String
+            type:String,     //cloudinary url
         },
         watchHistory:[
             {
@@ -49,17 +49,17 @@ const userSchema = new Schema(
     }
 )
 
-userSchema.pre("save",async function (next) {
+userSchema.pre("save",async function (next) {                                  //bcryption of password whenever there is change in the password
     if(!this.isModified("password")) return next();
     this.password=bcrypt.hash(this.password,10)
     next()
 }) 
  
-userSchema.methods.isPasswordCorrect = async function(password){
+userSchema.methods.isPasswordCorrect = async function(password){                       //created custom hook for comparing original password with bcrypted password 
     return await bcrypt.compare(password,this.password)
 }
 
-userSchema.methods.generateAccessToken= function(){
+userSchema.methods.generateAccessToken= function(){                         //created custom hooks to generate access token 
     return jwt.sign(
         {
             _id:this._id,
@@ -74,7 +74,7 @@ userSchema.methods.generateAccessToken= function(){
     )
 }
 
-userSchema.methods.generateRefreshToken=function(){
+userSchema.methods.generateRefreshToken=function(){                              //created custom hooks to generate refresh token 
     return jwt.sign(
         {
             _id:this._id,
