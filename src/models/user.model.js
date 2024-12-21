@@ -65,7 +65,7 @@ userSchema.methods.generateAccessToken= function(){                         //cr
             _id:this._id,
             email:this.email,
             username:this.username,
-            fullName:this.fullName
+            fullName:this.fullNamed
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
