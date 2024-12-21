@@ -2,7 +2,6 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 
-
 const app=express()
 
 app.use(cors({
@@ -15,6 +14,12 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))   //to tell server if 
 app.use(express.static("public"))   //is we want to store some temp images etc in seerver then store it in public folder
 app.use(cookieParser())
 
+//routes import
+import userRouter from './routes/user.routes.js'
 
- 
+//routes declaration
+app.use("/api/v1/users",userRouter)
+
+// http://localhost:8000/api/v1/users/register
+
 export {app}
