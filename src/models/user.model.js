@@ -1,5 +1,6 @@
 import mongoose , {Schema} from "mongoose"
 import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken"
 
 const userSchema = new Schema(
     {
@@ -60,20 +61,41 @@ userSchema.methods.isPasswordCorrect = async function(password){                
     return await bcrypt.compare(password,this.password)
 }
 
-userSchema.methods.generateAccessToken= function(){                         //created custom hooks to generate access token 
-    return jwt.sign(
+// userSchema.methods.generateAccessToken= function(){                         //created custom hooks to generate access token 
+//     return jwt.sign(
+//         {
+//             _id:this._id,
+//             email:this.email,
+//             username:this.username,
+//             fullName:this.fullNamed,
+            
+
+//         },
+//         process.env.ACCESS_TOKEN_SECRET,
+//         {
+//             expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+//         },
+       
+//     )
+// }
+
+userSchema.methods.generateAccessToken = function () {
+    try {
+      return jwt.sign(
         {
-            _id:this._id,
-            email:this.email,
-            username:this.username,
-            fullName:this.fullNamed
+          _id: this._id,
+          email: this.email,
+          username: this.username,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
-        }
-    )
-}
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+      );
+    } catch (err) {
+      console.error("Error generating access token:", err);
+      throw new Error("Failed to generate access token");
+    }
+  };
+  
 
 userSchema.methods.generateRefreshToken=function(){                              //created custom hooks to generate refresh token 
     return jwt.sign(
@@ -86,6 +108,5 @@ userSchema.methods.generateRefreshToken=function(){                             
         }
     )
 }
-
 
 export const User=mongoose.model("User",userSchema)
